@@ -42,7 +42,6 @@ const drawQuilt = (redraw = false, newSet) => {
     if (redraw) {
       fabricSet = newSet;
     } else { fabricSet = currentFabrics; }
-    console.log(fabricSet);
 
     // Iterate through the fabrics saved
     fabricSet.forEach((fabric, i) => {
@@ -83,7 +82,7 @@ const drawQuilt = (redraw = false, newSet) => {
       }
 
       const spacedGrid = () => {
-        for (let k = 0; k < (canvasHeight / squareSize)+1; k++) {
+        for (let k = 0; k < (canvasHeight / squareSize) + 1; k++) {
           // Rows
           for (let j = 0; j < (canvasWidth / squareSize); j++) {
             // Columns
@@ -114,7 +113,7 @@ const drawQuilt = (redraw = false, newSet) => {
                   squareSize
                 );
               }
-            } else if (k === i || k%(fabricSet.length-1) === i || k === (fabricSet.length-1)*2 || k === (fabricSet.length-1)*3) {
+            } else if (k === i || k % (fabricSet.length - 1) === i || k === (fabricSet.length - 1) * 2 || k === (fabricSet.length - 1) * 3) {
               if (k % 2 === 0) {
                 // even rows are offset
                 ctx.drawImage(
@@ -163,6 +162,12 @@ const drawQuilt = (redraw = false, newSet) => {
 }
 
 const toggleSwatch = (e) => {
+
+  if (document.getElementById('background').classList.contains('editing')){
+    chooseNewBackground(e)
+    return;
+  }
+
   let selectedSwatches = document.getElementsByClassName('selected');
   if (selectedSwatches.length === 2 && e.target.classList.contains('selected')) {
     return;
@@ -179,6 +184,7 @@ const toggleSwatch = (e) => {
 
 const removeSwatches = () => {
   chrome.storage.sync.set({ fabrics: [] });
+  chrome.storage.sync.set({ quiltBackground: '' });
   location.reload();
 }
 
@@ -186,6 +192,30 @@ const getRandomOffset = (max) => {
   return Math.floor(Math.random() * max)
 }
 
+const editBackground = () => {
+  const background = document.getElementById('background');
+  background.classList.add('editing');
+  console.log('edit background');
+}
+
+const chooseNewBackground = (e) => {
+  chrome.storage.sync.set({ quiltBackground: e.target.src });
+  location.reload();
+}
+
+const renderBackgroundSwatch = () => {
+  let swatch = document.createElement('img');
+  swatch.id = 'background';
+  swatch.addEventListener("click", editBackground); swatch.height = 50;
+  swatch.width = 50;
+  chrome.storage.sync.get('quiltBackground', ({ quiltBackground }) => {
+    console.log(quiltBackground);
+    swatch.src = quiltBackground;
+    swatchDiv.appendChild(swatch);
+  });
+}
+
+renderBackgroundSwatch();
 drawQuilt();
 
 let restButton = document.getElementById('reset');

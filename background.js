@@ -1,9 +1,6 @@
-let color = '#3aa757';
 let fabrics = [];
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ color });
-  console.log('Default background color set to %cgreen', `color: ${color}`);
 
   chrome.storage.sync.set({ fabrics });
   chrome.contextMenus.create({
@@ -15,9 +12,13 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if ('save' === info.menuItemId) {
-    console.log('test test test', info);
-    chrome.storage.sync.get('fabrics', ({fabrics}) => {
-      chrome.storage.sync.set({ fabrics: [...fabrics, info.srcUrl] });
+    chrome.storage.sync.get('fabrics', ({ fabrics }) => {
+      console.log(fabrics.length);
+      if (fabrics.length === 0) {
+        chrome.storage.sync.set({ fabrics: [...fabrics, info.srcUrl], quiltBackground: info.srcUrl });
+      } else {
+        chrome.storage.sync.set({ fabrics: [...fabrics, info.srcUrl] });
+      }
     });
   }
 });

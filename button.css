@@ -22,3 +22,10 @@ canvas {
 #swatch:hover {
   cursor: pointer;
 }
+
+#background {
+  margin: 0 10px 5px 0;
+}
+#background.editing {
+  border: 2px dashed black;
+}
