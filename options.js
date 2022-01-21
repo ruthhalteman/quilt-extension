@@ -1,5 +1,3 @@
-import thing from './test.js';
-
 let swatchDiv = document.getElementById("swatchDiv");
 let page = document.getElementById("buttonDiv");
 let selectedClassName = "current";
@@ -54,7 +52,7 @@ function constructOptions(buttonColors) {
     // get 2d context to draw on (the "bitmap" mentioned earlier)
     var ctx = canvasEl.getContext('2d');
 
-    let fabImgs = fabrics.map((fabric, i) => {
+    const fabImgs = fabrics.map((fabric, i) => {
 
       // create swatch for visibility
       let swatch = document.createElement('img');
@@ -71,16 +69,20 @@ function constructOptions(buttonColors) {
       return img;
     });
 
+    let newFab = [...fabImgs];
+
     const squareSize = 100;
     // Iterate through the fabrics saved
-    fabImgs.forEach((fabric, i) => {
+    newFab.forEach((fabric, i) => {
 
       fabric.onload = function () {
         for (let k = 0; k < (canvasHeight/squareSize); k++) {
-          for (let j = 0; j < (canvasWidth/squareSize)/fabImgs.length; j++) {
+          // Rows
+          for (let j = 0; j < (canvasWidth/squareSize)/(fabImgs.length-1); j++) {
+            // Columns
             if (k % 2 === 1) {
+              // even rows are offset
               ctx.drawImage(fabric, i * squareSize + j * (squareSize * fabImgs.length) - (squareSize), 0 * squareSize + k * (squareSize), squareSize, squareSize);
-
             } else {
               ctx.drawImage(fabric, i * squareSize + j * (squareSize * fabImgs.length), 0 * squareSize + k * (squareSize), squareSize, squareSize);
             }
