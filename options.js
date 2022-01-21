@@ -163,7 +163,7 @@ const drawQuilt = (redraw = false, newSet) => {
 
 const toggleSwatch = (e) => {
 
-  if (document.getElementById('background').classList.contains('editing')){
+  if (document.getElementById('background').classList.contains('editing')) {
     chooseNewBackground(e)
     return;
   }
@@ -204,11 +204,15 @@ const chooseNewBackground = (e) => {
 }
 
 const renderBackgroundSwatch = () => {
-  let swatch = document.createElement('img');
-  swatch.id = 'background';
-  swatch.addEventListener("click", editBackground); swatch.height = 50;
-  swatch.width = 50;
+
   chrome.storage.sync.get('quiltBackground', ({ quiltBackground }) => {
+    if (quiltBackground === '') {
+      return;
+    }
+    let swatch = document.createElement('img');
+    swatch.id = 'background';
+    swatch.addEventListener("click", editBackground); swatch.height = 50;
+    swatch.width = 50;
     console.log(quiltBackground);
     swatch.src = quiltBackground;
     swatchDiv.appendChild(swatch);
