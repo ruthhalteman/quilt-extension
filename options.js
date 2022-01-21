@@ -72,24 +72,48 @@ function constructOptions(buttonColors) {
     let newFab = [...fabImgs];
 
     const squareSize = 100;
+    const offset = 100;
     // Iterate through the fabrics saved
     newFab.forEach((fabric, i) => {
 
       fabric.onload = function () {
-        for (let k = 0; k < (canvasHeight/squareSize); k++) {
+        for (let k = 0; k < (canvasHeight / squareSize); k++) {
           // Rows
-          for (let j = 0; j < (canvasWidth/squareSize)/(fabImgs.length-1); j++) {
+          for (let j = 0; j < (canvasWidth / squareSize) / (fabImgs.length - 1); j++) {
             // Columns
             if (k % 2 === 1) {
               // even rows are offset
-              ctx.drawImage(fabric, i * squareSize + j * (squareSize * fabImgs.length) - (squareSize), 0 * squareSize + k * (squareSize), squareSize, squareSize);
+              ctx.drawImage(
+                fabric,
+                getRandomOffset(offset),
+                getRandomOffset(offset),
+                squareSize * 1.5,
+                squareSize * 1.5,
+                i * squareSize + j * (squareSize * fabImgs.length) - (squareSize),
+                0 * squareSize + k * (squareSize),
+                squareSize,
+                squareSize
+              );
             } else {
-              ctx.drawImage(fabric, i * squareSize + j * (squareSize * fabImgs.length), 0 * squareSize + k * (squareSize), squareSize, squareSize);
+              ctx.drawImage(
+                fabric,
+                getRandomOffset(offset),
+                getRandomOffset(offset),
+                squareSize * 1.5,
+                squareSize * 1.5,
+                i * squareSize + j * (squareSize * fabImgs.length),
+                0 * squareSize + k * (squareSize),
+                squareSize,
+                squareSize
+              );
             }
           }
         }
       };
     });
+
+
+
   });
 }
 
@@ -98,8 +122,12 @@ const toggleSwatch = () => {
 }
 
 const removeSwatches = () => {
-  chrome.storage.sync.set({fabrics: []});
+  chrome.storage.sync.set({ fabrics: [] });
   location.reload();
+}
+
+const getRandomOffset = (max) => {
+  return Math.floor(Math.random() * max)
 }
 
 // Initialize the page by constructing the color options
