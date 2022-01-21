@@ -16,6 +16,9 @@ canvas {
 #swatch {
   margin: 0 10px 5px 0;
 }
+#swatch.selected {
+  border: 2px solid rgb(60, 219, 60);
+}
 #swatch:hover {
   cursor: pointer;
 }

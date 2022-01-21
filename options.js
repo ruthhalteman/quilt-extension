@@ -3,6 +3,13 @@ let page = document.getElementById("buttonDiv");
 let selectedClassName = "current";
 const presetButtonColors = ["#3aa757", "#e8453c", "#f9bb2d", "#4688f1"];
 
+const canvasHeight = 700;
+const canvasWidth = 700;
+var canvasEl = document.getElementById('quilt');
+let currentFabrics = [];
+
+// get 2d context to draw on (the "bitmap" mentioned earlier)
+var ctx = canvasEl.getContext('2d');
 // Reacts to a button click by marking marking the selected button and saving
 // the selection
 function handleButtonClick(event) {
@@ -43,25 +50,31 @@ function constructOptions(buttonColors) {
   //   }
   // });
 
+
+}
+
+const drawQuilt = (redraw = false, newSet) => {
+  const squareSize = 100;
+  const offset = 100;
+  const canvasHeight = 700;
+  const canvasWidth = 700;
+
   chrome.storage.sync.get('fabrics', ({ fabrics }) => {
 
-    const canvasHeight = 700;
-    const canvasWidth = 700;
-    var canvasEl = document.getElementById('quilt');
 
-    // get 2d context to draw on (the "bitmap" mentioned earlier)
-    var ctx = canvasEl.getContext('2d');
-
-    const fabImgs = fabrics.map((fabric, i) => {
-
-      // create swatch for visibility
-      let swatch = document.createElement('img');
-      swatch.id = 'swatch';
-      swatch.addEventListener("click", toggleSwatch);
-      swatch.src = fabric;
-      swatch.height = 50;
-      swatch.width = 50;
-      swatchDiv.appendChild(swatch);
+    currentFabrics = fabrics.map((fabric, i) => {
+      if (!redraw) {
+        // create swatch for visibility
+        let swatch = document.createElement('img');
+        swatch.id = 'swatch';
+        swatch.classList.add('selected');
+        swatch.setAttribute('data-id', i);
+        swatch.addEventListener("click", toggleSwatch);
+        swatch.src = fabric;
+        swatch.height = 50;
+        swatch.width = 50;
+        swatchDiv.appendChild(swatch);
+      }
 
       // creat canvas element
       let img = new Image();
@@ -69,17 +82,20 @@ function constructOptions(buttonColors) {
       return img;
     });
 
-    let newFab = [...fabImgs];
 
-    const squareSize = 100;
-    const offset = 100;
+    let fabricSet;
+    if (redraw) {
+      fabricSet = newSet;
+    } else { fabricSet = currentFabrics; }
+    console.log(fabricSet);
+
     // Iterate through the fabrics saved
-    newFab.forEach((fabric, i) => {
+    fabricSet.forEach((fabric, i) => {
 
-      fabric.onload = function () {
+      const simpleGrid = () => {
         for (let k = 0; k < (canvasHeight / squareSize); k++) {
           // Rows
-          for (let j = 0; j < (canvasWidth / squareSize) / (fabImgs.length - 1); j++) {
+          for (let j = 0; j < (canvasWidth / squareSize) / (fabricSet.length - 1); j++) {
             // Columns
             if (k % 2 === 1) {
               // even rows are offset
@@ -89,7 +105,7 @@ function constructOptions(buttonColors) {
                 getRandomOffset(offset),
                 squareSize * 1.5,
                 squareSize * 1.5,
-                i * squareSize + j * (squareSize * fabImgs.length) - (squareSize),
+                i * squareSize + j * (squareSize * fabricSet.length) - (squareSize),
                 0 * squareSize + k * (squareSize),
                 squareSize,
                 squareSize
@@ -101,7 +117,7 @@ function constructOptions(buttonColors) {
                 getRandomOffset(offset),
                 squareSize * 1.5,
                 squareSize * 1.5,
-                i * squareSize + j * (squareSize * fabImgs.length),
+                i * squareSize + j * (squareSize * fabricSet.length),
                 0 * squareSize + k * (squareSize),
                 squareSize,
                 squareSize
@@ -109,16 +125,33 @@ function constructOptions(buttonColors) {
             }
           }
         }
-      };
+      }
+
+      if (redraw) {
+        simpleGrid();
+      } else {
+        fabric.onload = function () {
+          simpleGrid();
+        };
+      }
     });
-
-
-
   });
+
 }
 
-const toggleSwatch = () => {
-  console.log('toggle swatch');
+const toggleSwatch = (e) => {
+  let selectedSwatches = document.getElementsByClassName('selected');
+  if (selectedSwatches.length === 2 && e.target.classList.contains('selected')) {
+    return;
+  }
+  e.target.classList.toggle('selected');
+  selectedSwatches = document.getElementsByClassName('selected');
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  let newSet = [];
+  for (let fabric of selectedSwatches) {
+    newSet = [...newSet, currentFabrics[fabric.dataset.id]];
+  }
+  drawQuilt(true, newSet);
 }
 
 const removeSwatches = () => {
@@ -132,6 +165,8 @@ const getRandomOffset = (max) => {
 
 // Initialize the page by constructing the color options
 constructOptions(presetButtonColors);
+
+drawQuilt();
 
 let restButton = document.getElementById('reset');
 restButton.addEventListener('click', removeSwatches);
