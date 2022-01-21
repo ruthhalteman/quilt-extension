@@ -1,7 +1,4 @@
 let swatchDiv = document.getElementById("swatchDiv");
-let page = document.getElementById("buttonDiv");
-let selectedClassName = "current";
-const presetButtonColors = ["#3aa757", "#e8453c", "#f9bb2d", "#4688f1"];
 
 const canvasHeight = 700;
 const canvasWidth = 700;
@@ -10,48 +7,6 @@ let currentFabrics = [];
 
 // get 2d context to draw on (the "bitmap" mentioned earlier)
 var ctx = canvasEl.getContext('2d');
-// Reacts to a button click by marking marking the selected button and saving
-// the selection
-function handleButtonClick(event) {
-  // Remove styling from the previously selected color
-  let current = event.target.parentElement.querySelector(
-    `.${selectedClassName}`
-  );
-  if (current && current !== event.target) {
-    current.classList.remove(selectedClassName);
-  }
-
-  // Mark the button as selected
-  let color = event.target.dataset.color;
-  event.target.classList.add(selectedClassName);
-  chrome.storage.sync.set({ color });
-}
-
-// Add a button to the page for each supplied color
-function constructOptions(buttonColors) {
-  // chrome.storage.sync.get("color", (data) => {
-  //   let currentColor = data.color;
-
-  //   // For each color we were provided…
-  //   for (let buttonColor of buttonColors) {
-  //     // …crate a button with that color…
-  //     let button = document.createElement("button");
-  //     button.dataset.color = buttonColor;
-  //     button.style.backgroundColor = buttonColor;
-
-  //     // …mark the currently selected color…
-  //     if (buttonColor === currentColor) {
-  //       button.classList.add(selectedClassName);
-  //     }
-
-  //     // …and register a listener for when that button is clicked
-  //     button.addEventListener("click", handleButtonClick);
-  //     page.appendChild(button);
-  //   }
-  // });
-
-
-}
 
 const drawQuilt = (redraw = false, newSet) => {
   const squareSize = 100;
@@ -106,7 +61,7 @@ const drawQuilt = (redraw = false, newSet) => {
                 squareSize * 1.5,
                 squareSize * 1.5,
                 i * squareSize + j * (squareSize * fabricSet.length) - (squareSize),
-                0 * squareSize + k * (squareSize),
+                k * (squareSize),
                 squareSize,
                 squareSize
               );
@@ -118,7 +73,7 @@ const drawQuilt = (redraw = false, newSet) => {
                 squareSize * 1.5,
                 squareSize * 1.5,
                 i * squareSize + j * (squareSize * fabricSet.length),
-                0 * squareSize + k * (squareSize),
+                k * (squareSize),
                 squareSize,
                 squareSize
               );
@@ -127,11 +82,79 @@ const drawQuilt = (redraw = false, newSet) => {
         }
       }
 
+      const spacedGrid = () => {
+        for (let k = 0; k < (canvasHeight / squareSize)+1; k++) {
+          // Rows
+          for (let j = 0; j < (canvasWidth / squareSize); j++) {
+            // Columns
+            if (i === 0) {
+              if (k % 2 === 1) {
+                // even rows are offset
+                ctx.drawImage(
+                  fabric,
+                  getRandomOffset(offset),
+                  getRandomOffset(offset),
+                  squareSize * 1.5,
+                  squareSize * 1.5,
+                  j * (squareSize * 2) - (squareSize),
+                  k * (squareSize),
+                  squareSize,
+                  squareSize
+                );
+              } else {
+                ctx.drawImage(
+                  fabric,
+                  getRandomOffset(offset),
+                  getRandomOffset(offset),
+                  squareSize * 1.5,
+                  squareSize * 1.5,
+                  j * (squareSize * 2),
+                  k * (squareSize),
+                  squareSize,
+                  squareSize
+                );
+              }
+            } else if (k === i || k-(fabricSet.length-1) === i) {
+              if (k % 2 === 0) {
+                // even rows are offset
+                ctx.drawImage(
+                  fabric,
+                  getRandomOffset(offset),
+                  getRandomOffset(offset),
+                  squareSize * 1.5,
+                  squareSize * 1.5,
+                  squareSize + j * (squareSize * 2) - (squareSize),
+                  (k - 1) * (squareSize),
+                  squareSize,
+                  squareSize
+                );
+              } else {
+                ctx.drawImage(
+                  fabric,
+                  getRandomOffset(offset),
+                  getRandomOffset(offset),
+                  squareSize * 1.5,
+                  squareSize * 1.5,
+                  squareSize + j * (squareSize * 2),
+                  (k - 1) * (squareSize),
+                  squareSize,
+                  squareSize
+                );
+              }
+            }
+
+          }
+        }
+      }
+
       if (redraw) {
-        simpleGrid();
-      } else {
-        fabric.onload = function () {
+        if (fabricSet.length < 3) {
           simpleGrid();
+        } else { spacedGrid(); }
+      } else {
+        // need to load the first time
+        fabric.onload = function () {
+          spacedGrid();
         };
       }
     });
@@ -162,9 +185,6 @@ const removeSwatches = () => {
 const getRandomOffset = (max) => {
   return Math.floor(Math.random() * max)
 }
-
-// Initialize the page by constructing the color options
-constructOptions(presetButtonColors);
 
 drawQuilt();
 
