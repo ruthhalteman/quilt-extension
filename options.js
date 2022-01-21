@@ -10,7 +10,7 @@ var ctx = canvasEl.getContext('2d');
 
 const drawQuilt = (redraw = false, newSet) => {
   const squareSize = 100;
-  const offset = 100;
+  const offset = 200;
   const canvasHeight = 700;
   const canvasWidth = 700;
 
@@ -114,7 +114,7 @@ const drawQuilt = (redraw = false, newSet) => {
                   squareSize
                 );
               }
-            } else if (k === i || k-(fabricSet.length-1) === i) {
+            } else if (k === i || k%(fabricSet.length-1) === i || k === (fabricSet.length-1)*2 || k === (fabricSet.length-1)*3) {
               if (k % 2 === 0) {
                 // even rows are offset
                 ctx.drawImage(
