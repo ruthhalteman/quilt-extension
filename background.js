@@ -8,17 +8,23 @@ chrome.runtime.onInstalled.addListener(() => {
     title: 'Save fabric',
     contexts: ['image'],
   });
+  // chrome.contextMenus.create({
+  //   id: 'view',
+  //   title: 'Open visualizer',
+  //   contexts: ['all'],
+  // });
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if ('save' === info.menuItemId) {
     chrome.storage.sync.get('fabrics', ({ fabrics }) => {
-      console.log(fabrics.length);
       if (fabrics.length === 0) {
         chrome.storage.sync.set({ fabrics: [...fabrics, info.srcUrl], quiltBackground: info.srcUrl });
       } else {
         chrome.storage.sync.set({ fabrics: [...fabrics, info.srcUrl] });
       }
     });
+  } else if ('view' === info.menuItemId) {
+    chrome.runtime.openOptionsPage()
   }
 });

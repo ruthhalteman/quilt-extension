@@ -1,6 +1,6 @@
 {
-  "name": "Getting Started Example",
-  "description": "Build an Extension!",
+  "name": "Fabric shopping helper",
+  "description": "Easily check how different fabrics would look together while shopping!",
   "version": "1.0",
   "manifest_version": 3,
   "background": {
