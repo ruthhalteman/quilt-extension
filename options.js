@@ -14,8 +14,9 @@ const drawQuilt = (redraw = false, newSet) => {
   const canvasHeight = 700;
   const canvasWidth = 700;
 
-  chrome.storage.sync.get('fabrics', ({ fabrics }) => {
 
+
+  chrome.storage.sync.get(['fabrics', 'selectedFabrics'], ({ fabrics, selectedFabrics }) => {
 
     currentFabrics = fabrics.map((fabric, i) => {
       if (!redraw) {
@@ -41,7 +42,12 @@ const drawQuilt = (redraw = false, newSet) => {
     let fabricSet;
     if (redraw) {
       fabricSet = newSet;
-    } else { fabricSet = currentFabrics; }
+      //chrome.storage.sync.set({ selectedFabrics: fabricSet });
+    } else {
+      fabricSet = currentFabrics;
+    }
+
+
 
     // Iterate through the fabrics saved
     fabricSet.forEach((fabric, i) => {
@@ -163,10 +169,10 @@ const drawQuilt = (redraw = false, newSet) => {
 
 const toggleSwatch = (e) => {
 
-  if (document.getElementById('background').classList.contains('editing')) {
-    chooseNewBackground(e)
-    return;
-  }
+  // if (document.getElementById('background').classList.contains('editing')) {
+  //   chooseNewBackground(e)
+  //   return;
+  // }
 
   let selectedSwatches = document.getElementsByClassName('selected');
   if (selectedSwatches.length === 2 && e.target.classList.contains('selected')) {
@@ -219,7 +225,7 @@ const renderBackgroundSwatch = () => {
   });
 }
 
-renderBackgroundSwatch();
+//renderBackgroundSwatch();
 drawQuilt();
 
 let restButton = document.getElementById('reset');
