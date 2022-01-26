@@ -18,6 +18,11 @@ const drawQuilt = (redraw = false, newSet) => {
 
   chrome.storage.sync.get(['fabrics', 'selectedFabrics'], ({ fabrics, selectedFabrics }) => {
 
+    if (fabrics === []) {
+      renderEmptyState();
+      return;
+    }
+
     currentFabrics = fabrics.map((fabric, i) => {
       if (!redraw) {
         // create swatch for visibility
@@ -27,8 +32,8 @@ const drawQuilt = (redraw = false, newSet) => {
         swatch.setAttribute('data-id', i);
         swatch.addEventListener("click", toggleSwatch);
         swatch.src = fabric;
-        swatch.height = 50;
-        swatch.width = 50;
+        swatch.height = 70;
+        swatch.width = 70;
         swatchDiv.appendChild(swatch);
       }
 
@@ -223,6 +228,10 @@ const renderBackgroundSwatch = () => {
     swatch.src = quiltBackground;
     swatchDiv.appendChild(swatch);
   });
+}
+
+const renderEmptyState = () => {
+  // make empty state message
 }
 
 //renderBackgroundSwatch();
