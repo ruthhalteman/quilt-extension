@@ -17,6 +17,8 @@ const Options = () => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "fabrics") {
         setFabrics(newValue);
+        quilt.clear();
+        renderSwatches(newValue);
       }
     }
   });
@@ -79,6 +81,7 @@ const Options = () => {
         return swatch;
       }
     });
+    chrome.storage.sync.set({ fabrics: newSelectedFabrics });
     setFabrics(newSelectedFabrics);
     quilt.clear();
     renderSwatches(newSelectedFabrics);
