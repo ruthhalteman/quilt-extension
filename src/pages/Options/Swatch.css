@@ -1,9 +1,12 @@
 .swatchContainer {
   padding: 8px;
   border: 1px solid #ccc;
+  border-radius: 4px;
   display: grid;
   grid-template: "a b c" auto;
   grid-gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
 }
 
 .swatch {

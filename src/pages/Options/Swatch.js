@@ -17,14 +17,18 @@ const Swatch = ({ fabricSwatchData, id }) => {
     <div className="swatchContainer">
       <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
       <span className="text">
+        From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, '')}<br></br>
         <a
           href={fabricSwatchData.linkUrl || fabricSwatchData.pageUrl}
           target="_blank"
         >
-          Buy Fabric
+          Go to this fabric's page
         </a>
       </span>
-      <button onClick={deleteSwatch}>delete</button>
+      <span style={{ display: "flex", flexDirection: "column" }}>
+        <button onClick={deleteSwatch}>delete</button>
+        <button>toggle visibility</button>
+      </span>
     </div>
   );
 };

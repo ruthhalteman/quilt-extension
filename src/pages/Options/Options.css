@@ -29,6 +29,7 @@ body {
   display: flex;
   flex-direction: column;
   flex-basis: min-content;
+  max-width: 400px;
 }
 
 .canvasContainer {
