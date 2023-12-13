@@ -19,6 +19,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             imageUrl: info.srcUrl,
             linkUrl: info.linkUrl,
             pageUrl: info.pageUrl,
+            visible: true
           },
         ],
       });

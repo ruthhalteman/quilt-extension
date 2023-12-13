@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import "./Swatch.css";
 
-const Swatch = ({ fabricSwatchData, id }) => {
+const Swatch = ({ fabricSwatchData, id, toggleSwatch }) => {
   const deleteSwatch = () => {
     chrome.storage.sync.get("fabrics", ({ fabrics }) => {
       chrome.storage.sync.set({
@@ -27,7 +27,7 @@ const Swatch = ({ fabricSwatchData, id }) => {
       </span>
       <span style={{ display: "flex", flexDirection: "column" }}>
         <button onClick={deleteSwatch}>delete</button>
-        <button>toggle visibility</button>
+        <button onClick={()=>toggleSwatch(fabricSwatchData.imageUrl)}>toggle visibility</button>
       </span>
     </div>
   );
