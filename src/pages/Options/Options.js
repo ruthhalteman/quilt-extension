@@ -13,7 +13,9 @@ const Options = () => {
   // update swatch list when we add while shopping
   chrome.storage.onChanged.addListener((changes) => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-      setFabrics(newValue);
+      if (key === 'fabrics') {
+        setFabrics(newValue);
+      }
     }
   });
 
@@ -44,6 +46,10 @@ const Options = () => {
     canvas.renderAll();
   }, []);
 
+  const clearSwatches = () => {
+    chrome.storage.sync.set({ fabrics: [] });
+  };
+
   return (
     <div className="OptionsContainer">
       <div className="header">Fabric <span>Vibe Check</span></div>
@@ -53,10 +59,11 @@ const Options = () => {
         </div>
         <div className="swatchListContainer">
           {currentFabrics.map((fabric, id) => (
-            <Swatch imageUrl={fabric} key={id} />
+            <Swatch imageUrl={fabric.imageUrl} key={id} />
           ))}
         </div>
       </div>
+      <button onClick={clearSwatches}>Clear</button>
     </div>
   );
 };
