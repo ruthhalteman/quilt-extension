@@ -14,20 +14,25 @@ const Swatch = ({ fabricSwatchData, id, toggleSwatch }) => {
   };
 
   return (
-    <div className="swatchContainer">
+    <div className="swatchContainer" style={{background: fabricSwatchData.visible ? '#fff': '#ccc'}}>
       <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
       <span className="text">
-        From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, '')}<br></br>
+        From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, "")}
+        <br></br>
         <a
           href={fabricSwatchData.linkUrl || fabricSwatchData.pageUrl}
           target="_blank"
         >
           Go to this fabric's page
         </a>
+        <br></br>
+        {fabricSwatchData.visible ? "visible" : "hidden"}
       </span>
       <span style={{ display: "flex", flexDirection: "column" }}>
         <button onClick={deleteSwatch}>delete</button>
-        <button onClick={()=>toggleSwatch(fabricSwatchData.imageUrl)}>toggle visibility</button>
+        <button onClick={() => toggleSwatch(fabricSwatchData.imageUrl)}>
+          toggle visibility
+        </button>
       </span>
     </div>
   );

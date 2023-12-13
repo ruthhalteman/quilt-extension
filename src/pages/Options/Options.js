@@ -8,7 +8,6 @@ const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
   const [currentFabrics, setFabrics] = useState([]);
-  const [selectedFabrics, setSelectedFabrics] = useState([]);
   const quiltRef = useRef(null);
 
   const [quilt, setQuilt] = useState(null);
@@ -26,12 +25,10 @@ const Options = () => {
     // get fabrics from storage
     chrome.storage.sync.get(["fabrics"], ({ fabrics }) => {
       setFabrics(fabrics);
-      setSelectedFabrics(fabrics);
       setQuilt(
         new fabric.Canvas(quiltRef.current, {
           height: canvasHeight,
           width: canvasWidth,
-          backgroundColor: "#ccc",
         })
       );
       renderSwatches(fabrics);
@@ -42,7 +39,8 @@ const Options = () => {
     const squareSize = 100;
     const swatchCount = list.length;
 
-    list.filter((swatch)=>(!swatch.visible)).forEach((fabricSwatchData, i) => {
+    const visibleSwatches = list.filter((swatch) => swatch.visible);
+    visibleSwatches.forEach((fabricSwatchData, i) => {
       for (let k = 0; k < canvasHeight / squareSize; k++) {
         for (let j = 0; j < canvasWidth / squareSize; j++) {
           if (k % 2 === 0) {
@@ -73,7 +71,7 @@ const Options = () => {
   };
 
   const toggleSwatchHandler = (imgUrl) => {
-    let newSelectedFabrics = selectedFabrics.map((swatch) => {
+    let newSelectedFabrics = currentFabrics.map((swatch) => {
       if (swatch.imageUrl === imgUrl) {
         swatch.visible = !swatch.visible;
         return swatch;
@@ -81,7 +79,7 @@ const Options = () => {
         return swatch;
       }
     });
-    setSelectedFabrics(newSelectedFabrics);
+    setFabrics(newSelectedFabrics);
     quilt.clear();
     renderSwatches(newSelectedFabrics);
   };
