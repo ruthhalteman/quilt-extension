@@ -1,0 +1,36 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.header {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 5px 0 5px 20px;
+  width: 100vw;
+  height: 45px;
+  background-color: #407994;
+  color: #fff;
+  font-size: 25px;
+}
+
+.header span {
+  font-family: cursive;
+}
+
+.contentContainer {
+  padding: 60px 20px;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 1fr);
+  grid-gap: 20px;
+}
+
+.swatchListContainer {
+  display: flex;
+  flex-direction: column;
+  flex-basis: min-content;
+}
+
+.canvasContainer {
+  justify-self: end;
+}

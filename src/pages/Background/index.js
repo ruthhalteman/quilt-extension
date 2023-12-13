@@ -1,3 +1,6 @@
+console.log('This is the background page.');
+console.log('Put the background scripts here.');
+
 let fabrics = [];
 
 chrome.runtime.onInstalled.addListener(() => {
