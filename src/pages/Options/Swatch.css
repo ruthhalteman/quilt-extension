@@ -2,7 +2,7 @@
   padding: 8px;
   border: 1px solid #ccc;
   display: grid;
-  grid-template: "a b" auto;
+  grid-template: "a b c" auto;
   grid-gap: 10px;
 }
 

@@ -2,21 +2,27 @@ import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import "./Swatch.css";
 
-const Swatch = ({ imageUrl, id }) => {
+const Swatch = ({ fabricSwatchData, id }) => {
   const deleteSwatch = () => {
     chrome.storage.sync.get("fabrics", ({ fabrics }) => {
       chrome.storage.sync.set({
-        fabrics: fabrics.filter((fabric) => fabric.imageUrl !== imageUrl),
+        fabrics: fabrics.filter(
+          (fabric) => fabric.imageUrl !== fabricSwatchData.imageUrl
+        ),
       });
     });
   };
 
   return (
     <div className="swatchContainer">
-      <img className="swatch" src={imageUrl} key={id} />
+      <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
       <span className="text">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed aliquet
-        quam ut est hendrerit, in convallis massa hendrerit.
+        <a
+          href={fabricSwatchData.linkUrl || fabricSwatchData.pageUrl}
+          target="_blank"
+        >
+          Buy Fabric
+        </a>
       </span>
       <button onClick={deleteSwatch}>delete</button>
     </div>

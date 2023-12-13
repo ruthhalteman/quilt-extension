@@ -58,8 +58,8 @@ const Options = () => {
           <canvas className="quiltCanvas" ref={quilt}></canvas>
         </div>
         <div className="swatchListContainer">
-          {currentFabrics.map((fabric, id) => (
-            <Swatch imageUrl={fabric.imageUrl} key={id} />
+          {currentFabrics.map((fabricSwatchData, id) => (
+            <Swatch key={id} fabricSwatchData={fabricSwatchData}/>
           ))}
         </div>
       </div>

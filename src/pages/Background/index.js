@@ -12,7 +12,16 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if ("save" === info.menuItemId) {
     chrome.storage.sync.get("fabrics", ({ fabrics }) => {
-      chrome.storage.sync.set({ fabrics: [...fabrics, {imageUrl: info.srcUrl}] });
+      chrome.storage.sync.set({
+        fabrics: [
+          ...fabrics,
+          {
+            imageUrl: info.srcUrl,
+            linkUrl: info.linkUrl,
+            pageUrl: info.pageUrl,
+          },
+        ],
+      });
     });
   } else if ("view" === info.menuItemId) {
     chrome.runtime.openOptionsPage();
