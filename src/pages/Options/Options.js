@@ -18,7 +18,7 @@ const Options = () => {
       if (key === "fabrics") {
         setFabrics(newValue);
         quilt.clear();
-        renderSwatches(newValue);
+        renderSwatches(newValue, quilt);
       }
     }
   });
@@ -27,17 +27,16 @@ const Options = () => {
     // get fabrics from storage
     chrome.storage.sync.get(["fabrics"], ({ fabrics }) => {
       setFabrics(fabrics);
-      setQuilt(
-        new fabric.Canvas(quiltRef.current, {
-          height: canvasHeight,
-          width: canvasWidth,
-        })
-      );
-      renderSwatches(fabrics);
+      const quiltCanvas = new fabric.Canvas(quiltRef.current, {
+        height: canvasHeight,
+        width: canvasWidth,
+      });
+      setQuilt(quiltCanvas);
+      renderSwatches(fabrics, quiltCanvas);
     });
   }, []);
 
-  const renderSwatches = (list) => {
+  const renderSwatches = (list, quiltCanvas) => {
     const squareSize = 100;
     const swatchCount = list.length;
 
@@ -51,7 +50,7 @@ const Options = () => {
               img.height = squareSize;
               img.left = i * squareSize;
               img.top = k * squareSize;
-              quilt.add(img);
+              quiltCanvas.add(img);
             });
           } else {
             fabric.Image.fromURL(fabricSwatchData.imageUrl, (img) => {
@@ -59,13 +58,13 @@ const Options = () => {
               img.height = squareSize;
               img.left = (i - 1) * squareSize;
               img.top = k * squareSize;
-              quilt.add(img);
+              quiltCanvas.add(img);
             });
           }
         }
       }
     });
-    quilt.renderAll();
+    quiltCanvas.renderAll();
   };
 
   const clearSwatches = () => {
@@ -84,7 +83,7 @@ const Options = () => {
     chrome.storage.sync.set({ fabrics: newSelectedFabrics });
     setFabrics(newSelectedFabrics);
     quilt.clear();
-    renderSwatches(newSelectedFabrics);
+    renderSwatches(newSelectedFabrics, quilt);
   };
 
   return (

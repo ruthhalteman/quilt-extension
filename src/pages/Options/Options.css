@@ -1,10 +1,11 @@
 body {
   padding: 0;
   margin: 0;
+  background-color: #eee;
 }
 
 .header {
-  position: absolute;
+  position: fixed;
   box-sizing: border-box;
   padding: 5px 0 5px 20px;
   width: 100vw;
@@ -12,6 +13,7 @@ body {
   background-color: #407994;
   color: #fff;
   font-size: 25px;
+  z-index: 20;
 }
 
 .header span {
@@ -19,7 +21,7 @@ body {
 }
 
 .contentContainer {
-  padding: 60px 20px;
+  padding: 60px 20px 0 20px;
   display: grid;
   grid-template-columns: 1fr minmax(0, 1fr);
   grid-gap: 20px;
@@ -30,6 +32,8 @@ body {
   flex-direction: column;
   flex-basis: min-content;
   max-width: 400px;
+  height: 90vh;
+  overflow: scroll;
 }
 
 .canvasContainer {
