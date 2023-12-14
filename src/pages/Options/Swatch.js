@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import "./Swatch.css";
-import { Button, Typography } from "antd";
+import { Button, Typography, Space } from "antd";
 const { Text, Link } = Typography;
 import {
   DeleteOutlined,
@@ -37,19 +37,28 @@ const Swatch = ({ fabricSwatchData, id }) => {
   return (
     <div
       className="swatchContainer"
-      style={{ opacity: fabricSwatchData.visible ? 1 : 0.5, background: '#fff' }}
+      style={{
+        opacity: fabricSwatchData.visible ? 1 : 0.5,
+        background: "#fff",
+      }}
     >
-      <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
-      <span className="text">
-        <Text>From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, "")}</Text>
-        <br></br>
-        <Link
-          href={fabricSwatchData.linkUrl || fabricSwatchData.pageUrl}
-          target="_blank"
-        >
-          View on site
-        </Link>
-      </span>
+      <Space>
+        <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
+        <span className="text">
+          <Text>
+            From{" "}
+            <b>{fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, "")}</b>
+          </Text>
+          <br></br>
+          <Link
+            href={fabricSwatchData.linkUrl || fabricSwatchData.pageUrl}
+            target="_blank"
+          >
+            View on site
+          </Link>
+        </span>
+      </Space>
+
       <span style={{ display: "grid", gridGap: 5 }}>
         <Button onClick={deleteSwatch} icon={<DeleteOutlined />} />
         <Button

@@ -10,8 +10,9 @@ body {
   padding: 5px 0 5px 20px;
   width: 100vw;
   height: 45px;
-  background-color: #407994;
-  color: #fff;
+  color: #437ed0;
+  background-color: #fff;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
   font-size: 25px;
   z-index: 20;
 }

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { fabric } from "fabric";
 import SettingsPanel from "./SettingsPanel";
 import SwatchList from "./SwatchList";
+import { Typography } from "antd";
+const { Text, Link } = Typography;
 
 const getRandomOffset = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -48,11 +50,12 @@ const EmptyState = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        border: "1px solid #ccc",
+        border: "1px solid #d9d9d9",
         position: "absolute",
+        background: "#fff",
       }}
     >
-      Start adding some fabrics!
+      <Text> Start adding some fabrics!</Text>
     </div>
   );
 };
@@ -166,22 +169,25 @@ const Options = () => {
     const HSTLayout = () => {
       for (let i = 0; i < canvasWidth / squareSize; i++) {
         for (let j = 0; j < canvasHeight / squareSize; j++) {
-          fabric.Image.fromURL(visibleSwatches[swatchCount-1].imageUrl, (img) => {
-            img.scale(scale).set({
-              top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
-              left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
-              clipPath: new fabric.Rect({
-                width: squareSize,
-                height: squareSize,
-                absolutePositioned: true,
-                top: j * squareSize,
-                left: i * squareSize,
-              }),
-            });
-            quiltCanvas.add(img);
-          });
+          fabric.Image.fromURL(
+            visibleSwatches[swatchCount - 1].imageUrl,
+            (img) => {
+              img.scale(scale).set({
+                top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                clipPath: new fabric.Rect({
+                  width: squareSize,
+                  height: squareSize,
+                  absolutePositioned: true,
+                  top: j * squareSize,
+                  left: i * squareSize,
+                }),
+              });
+              quiltCanvas.add(img);
+            }
+          );
 
-          const foregroundSwatches = visibleSwatches.slice(0, swatchCount-1);
+          const foregroundSwatches = visibleSwatches.slice(0, swatchCount - 1);
           const foregroundSwatchCount = foregroundSwatches.length;
           if (foregroundSwatchCount != 0) {
             const swatch =
@@ -212,22 +218,25 @@ const Options = () => {
     const modaLoveLayout = () => {
       for (let i = 0; i < canvasWidth / squareSize; i++) {
         for (let j = 0; j < canvasHeight / squareSize; j++) {
-          fabric.Image.fromURL(visibleSwatches[swatchCount-1].imageUrl, (img) => {
-            img.scale(scale).set({
-              top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
-              left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
-              clipPath: new fabric.Rect({
-                width: squareSize,
-                height: squareSize,
-                absolutePositioned: true,
-                top: j * squareSize,
-                left: i * squareSize,
-              }),
-            });
-            quiltCanvas.add(img);
-          });
+          fabric.Image.fromURL(
+            visibleSwatches[swatchCount - 1].imageUrl,
+            (img) => {
+              img.scale(scale).set({
+                top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                clipPath: new fabric.Rect({
+                  width: squareSize,
+                  height: squareSize,
+                  absolutePositioned: true,
+                  top: j * squareSize,
+                  left: i * squareSize,
+                }),
+              });
+              quiltCanvas.add(img);
+            }
+          );
 
-          const foregroundSwatches = visibleSwatches.slice(0, swatchCount-1);
+          const foregroundSwatches = visibleSwatches.slice(0, swatchCount - 1);
           const foregroundSwatchCount = foregroundSwatches.length;
           if (foregroundSwatchCount != 0) {
             const swatch =

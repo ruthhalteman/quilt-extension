@@ -9,4 +9,3 @@
 // root.render(<Popup />);
 
 chrome.runtime.openOptionsPage()
-console.log('hello world')

@@ -3,6 +3,10 @@ import { useRef, useState } from "react";
 import "./Options.css";
 import { Button, InputNumber, Select, Space, Typography } from "antd";
 const { Text, Link } = Typography;
+import {
+    DeleteOutlined,
+    DownloadOutlined
+  } from "@ant-design/icons";
 
 const SettingsPanel = ({
   gridSize,
@@ -13,7 +17,7 @@ const SettingsPanel = ({
   selectedLayout,
 }) => {
   return (
-    <div style={{ padding: 15 }}>
+    <div style={{ padding: 15, textAlign:'right' }}>
       <Space align={"center"}>
         <Text>Layout:</Text>
         <Select
@@ -21,6 +25,7 @@ const SettingsPanel = ({
           id="layout-select"
           onChange={changeLayout}
           defaultValue={selectedLayout}
+          style={{width: 150}}
         >
           <option value="basic">Basic Squares</option>
           <option value="randomHST">Scattered HSTs</option>
@@ -35,13 +40,14 @@ const SettingsPanel = ({
           onChange={(value) => {
             setGridSize(value);
           }}
+          style={{width: 200}}
         ></InputNumber>
       </Space>
       <br />
       <br />
       <Space>
-        <Button onClick={clearSwatches}>Clear All Swatches</Button>{" "}
-        <Button onClick={exportQuilt}>Save Image</Button>
+        <Button onClick={clearSwatches} icon={<DeleteOutlined />}>Clear All Swatches</Button>{" "}
+        <Button onClick={exportQuilt} icon={<DownloadOutlined />}>Save Image</Button>
       </Space>
     </div>
   );
