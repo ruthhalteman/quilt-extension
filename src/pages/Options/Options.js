@@ -16,7 +16,6 @@ const Options = () => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "fabrics") {
         setFabrics(newValue);
-        quilt.clear();
         renderSwatches(newValue, quilt);
       }
     }
@@ -39,6 +38,9 @@ const Options = () => {
   }, []);
 
   const renderSwatches = (list, quiltCanvas) => {
+    // we always want to clear, since we load a full design every time
+    quiltCanvas.clear();
+
     if (list.length === 0) {
       return;
     }
@@ -59,7 +61,6 @@ const Options = () => {
         });
       }
     }
-
     quiltCanvas.renderAll();
   };
 
@@ -77,9 +78,6 @@ const Options = () => {
       }
     });
     chrome.storage.sync.set({ fabrics: newSelectedFabrics });
-    setFabrics(newSelectedFabrics);
-    quilt.clear();
-    renderSwatches(newSelectedFabrics, quilt);
   };
 
   return (
