@@ -30,7 +30,7 @@ const SettingsPanel = ({
         defaultValue={selectedLayout}
       >
         <option value="basic">Basic Squares</option>
-        <option value="randomHST">Modern HSTs</option>
+        <option value="randomHST">Scattered HSTs</option>
       </select>{" "}
       <button onClick={clearSwatches}>Clear All Swatches</button>{" "}
       <button onClick={exportQuilt}>Save Image</button>
