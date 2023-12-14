@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "./Options.css";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { fabric } from "fabric";
 import Swatch from "./Swatch";
 
@@ -8,7 +8,6 @@ const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
   const [currentFabrics, setFabrics] = useState([]);
-  const quiltRef = useRef(null);
 
   const [quilt, setQuilt] = useState(null);
 
@@ -27,43 +26,40 @@ const Options = () => {
     // get fabrics from storage
     chrome.storage.sync.get(["fabrics"], ({ fabrics }) => {
       setFabrics(fabrics);
-      const quiltCanvas = new fabric.Canvas(quiltRef.current, {
-        height: canvasHeight,
-        width: canvasWidth,
-      });
+      const quiltCanvas = new fabric.Canvas(
+        document.getElementById("quiltCanvas"),
+        {
+          height: canvasHeight,
+          width: canvasWidth,
+        }
+      );
       setQuilt(quiltCanvas);
       renderSwatches(fabrics, quiltCanvas);
     });
   }, []);
 
   const renderSwatches = (list, quiltCanvas) => {
-    const squareSize = 100;
-    const swatchCount = list.length;
+    if (list.length === 0) {
+      return;
+    }
+    const squareSize = canvasWidth / 5;
 
     const visibleSwatches = list.filter((swatch) => swatch.visible);
-    visibleSwatches.forEach((fabricSwatchData, i) => {
-      for (let k = 0; k < canvasHeight / squareSize; k++) {
-        for (let j = 0; j < canvasWidth / squareSize; j++) {
-          if (k % 2 === 0) {
-            fabric.Image.fromURL(fabricSwatchData.imageUrl, (img) => {
-              img.width = squareSize;
-              img.height = squareSize;
-              img.left = i * squareSize;
-              img.top = k * squareSize;
-              quiltCanvas.add(img);
-            });
-          } else {
-            fabric.Image.fromURL(fabricSwatchData.imageUrl, (img) => {
-              img.width = squareSize;
-              img.height = squareSize;
-              img.left = (i - 1) * squareSize;
-              img.top = k * squareSize;
-              quiltCanvas.add(img);
-            });
-          }
-        }
+    const swatchCount = visibleSwatches.length;
+
+    for (let i = 0; i < canvasWidth / squareSize; i++) {
+      for (let j = 0; j < canvasHeight / squareSize; j++) {
+        const swatch = visibleSwatches[(i + j) % swatchCount];
+        fabric.Image.fromURL(swatch.imageUrl, (img) => {
+          img.width = squareSize;
+          img.height = squareSize;
+          img.left = i * squareSize;
+          img.top = j * squareSize;
+          quiltCanvas.add(img);
+        });
       }
-    });
+    }
+
     quiltCanvas.renderAll();
   };
 
@@ -93,7 +89,7 @@ const Options = () => {
       </div>
       <div className="contentContainer">
         <div className="canvasContainer">
-          <canvas className="quiltCanvas" ref={quiltRef}></canvas>
+          <canvas className="quiltCanvas" id="quiltCanvas"></canvas>
           <button onClick={clearSwatches}>Clear</button>
         </div>
         <div className="swatchListContainer">
