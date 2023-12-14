@@ -3,6 +3,7 @@ import "./Options.css";
 import { useState } from "react";
 import { fabric } from "fabric";
 import Swatch from "./Swatch";
+import SettingsPanel from "./SettingsPanel";
 
 const getRandomOffset = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -12,6 +13,7 @@ const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
   const [currentFabrics, setFabrics] = useState([]);
+  const [gridSize, setGridSize] = useState(5);
 
   const [quilt, setQuilt] = useState(null);
 
@@ -47,15 +49,16 @@ const Options = () => {
       return;
     }
 
-    const squareSize = canvasWidth / 8;
-    const scale = 0.5;
+    const squareSize = canvasWidth / gridSize;
+    const largeSquareSize = squareSize > canvasWidth / 4;
+    const scale = largeSquareSize ? 1 : 0.5;
 
     const visibleSwatches = list.filter((swatch) => swatch.visible);
     const swatchCount = visibleSwatches.length;
 
     // Chose these by experimentation, to avoid getting borders, watermarks etc in the image
-    const offsetMin = squareSize * 0.2;
-    const offsetMax = squareSize / scale - squareSize * 0.2;
+    const offsetMin = 20;
+    const offsetMax = largeSquareSize ? 120 : 70;
 
     if (swatchCount === 0) {
       return;
@@ -111,6 +114,20 @@ const Options = () => {
     chrome.storage.sync.set({ fabrics: newSelectedFabrics });
   };
 
+  const exportQuilt = () => {
+    const dataURL = quilt.toDataURL({ format: "png" });
+    const link = document.createElement("a");
+    link.download = "quilt-idea.png";
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  useEffect(() => {
+    renderSwatches(currentFabrics, quilt);
+  }, [gridSize]);
+
   return (
     <div className="OptionsContainer">
       <div className="header">
@@ -119,7 +136,12 @@ const Options = () => {
       <div className="contentContainer">
         <div className="canvasContainer">
           <canvas className="quiltCanvas" id="quiltCanvas"></canvas>
-          <button onClick={clearSwatches}>Clear</button>
+          <SettingsPanel
+            clearSwatches={clearSwatches}
+            gridSize={gridSize}
+            setGridSize={setGridSize}
+            exportQuilt={exportQuilt}
+          />
         </div>
         <div className="swatchListContainer">
           {currentFabrics.map((fabricSwatchData, id) => (
