@@ -4,6 +4,10 @@ import { useState } from "react";
 import { fabric } from "fabric";
 import Swatch from "./Swatch";
 
+const getRandomOffset = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
@@ -25,7 +29,7 @@ const Options = () => {
     // get fabrics from storage
     chrome.storage.sync.get(["fabrics"], ({ fabrics }) => {
       setFabrics(fabrics);
-      const quiltCanvas = new fabric.Canvas(
+      const quiltCanvas = new fabric.StaticCanvas(
         document.getElementById("quiltCanvas"),
         {
           height: canvasHeight,
@@ -38,25 +42,52 @@ const Options = () => {
   }, []);
 
   const renderSwatches = (list, quiltCanvas) => {
-    // we always want to clear, since we load a full design every time
-    quiltCanvas.clear();
-
-    if (list.length === 0) {
+    // wut
+    if (!quiltCanvas) {
       return;
     }
-    const squareSize = canvasWidth / 5;
+
+    const squareSize = canvasWidth / 8;
+    const scale = 0.5;
 
     const visibleSwatches = list.filter((swatch) => swatch.visible);
     const swatchCount = visibleSwatches.length;
+
+    // Chose these by experimentation, to avoid getting borders, watermarks etc in the image
+    const offsetMin = squareSize * 0.2;
+    const offsetMax = squareSize / scale - squareSize * 0.2;
+
+    if (swatchCount === 0) {
+      return;
+    }
+
+    // we always want to clear, since we load a full design every time
+    quiltCanvas.clear();
 
     for (let i = 0; i < canvasWidth / squareSize; i++) {
       for (let j = 0; j < canvasHeight / squareSize; j++) {
         const swatch = visibleSwatches[(i + j) % swatchCount];
         fabric.Image.fromURL(swatch.imageUrl, (img) => {
-          img.width = squareSize;
-          img.height = squareSize;
-          img.left = i * squareSize;
-          img.top = j * squareSize;
+          img.scale(scale).set({
+            top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+            left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+            clipPath: new fabric.Rect({
+              width: squareSize,
+              height: squareSize,
+              absolutePositioned: true,
+              top: j * squareSize,
+              left: i * squareSize,
+            }),
+          });
+          const debuggingRect = new fabric.Rect({
+            width: squareSize,
+            height: squareSize,
+            top: j * squareSize,
+            left: i * squareSize,
+            fill: "transparent",
+            stroke: "black",
+            strokeWidth: 1,
+          });
           quiltCanvas.add(img);
         });
       }
