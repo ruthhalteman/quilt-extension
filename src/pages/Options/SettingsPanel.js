@@ -2,9 +2,16 @@ import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import "./Options.css";
 
-const SettingsPanel = ({ gridSize, setGridSize, clearSwatches, exportQuilt }) => {
+const SettingsPanel = ({
+  gridSize,
+  setGridSize,
+  clearSwatches,
+  exportQuilt,
+  changeLayout,
+  selectedLayout,
+}) => {
   return (
-    <div style={{padding: 15}}>
+    <div style={{ padding: 15 }}>
       {" "}
       Grid Size:{" "}
       <input
@@ -14,6 +21,15 @@ const SettingsPanel = ({ gridSize, setGridSize, clearSwatches, exportQuilt }) =>
           setGridSize(e.target.value);
         }}
       ></input>{" "}
+      <select
+        name="layouts"
+        id="layout-select"
+        onChange={changeLayout}
+        defaultValue={selectedLayout}
+      >
+        <option value="basic">Basic Squares</option>
+        <option value="randomHST">Modern HSTs</option>
+      </select>
       <button onClick={clearSwatches}>Clear All Swatches</button>
       <button onClick={exportQuilt}>Save Image</button>
     </div>

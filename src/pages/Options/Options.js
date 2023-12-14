@@ -34,14 +34,15 @@ const Options = () => {
   const [currentFabrics, setFabrics] = useState([]);
   const [gridSize, setGridSize] = useState(6);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [currentLayout, setCurrentLayout] = useState("basic");
 
   const [quilt, setQuilt] = useState(null);
 
   chrome.storage.onChanged.addListener((changes) => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "fabrics") {
-        setFabrics(newValue);
         renderSwatches(newValue, quilt);
+        setFabrics(newValue);
       }
     }
   });
@@ -88,34 +89,96 @@ const Options = () => {
     // we always want to clear, since we load a full design every time
     quiltCanvas.clear();
 
-    for (let i = 0; i < canvasWidth / squareSize; i++) {
-      for (let j = 0; j < canvasHeight / squareSize; j++) {
-        const swatch = visibleSwatches[(i + j) % swatchCount];
-        fabric.Image.fromURL(swatch.imageUrl, (img) => {
-          img.scale(scale).set({
-            top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
-            left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
-            clipPath: new fabric.Rect({
+    // A layout that's just a grid of squares
+    const basicLayout = () => {
+      for (let i = 0; i < canvasWidth / squareSize; i++) {
+        for (let j = 0; j < canvasHeight / squareSize; j++) {
+          const swatch = visibleSwatches[(i + j) % swatchCount];
+          fabric.Image.fromURL(swatch.imageUrl, (img) => {
+            img.scale(scale).set({
+              top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+              left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+              clipPath: new fabric.Rect({
+                width: squareSize,
+                height: squareSize,
+                absolutePositioned: true,
+                top: j * squareSize,
+                left: i * squareSize,
+              }),
+            });
+            const debuggingRect = new fabric.Rect({
               width: squareSize,
               height: squareSize,
-              absolutePositioned: true,
               top: j * squareSize,
               left: i * squareSize,
-            }),
+              fill: "transparent",
+              stroke: "black",
+              strokeWidth: 1,
+            });
+            quiltCanvas.add(img);
           });
-          const debuggingRect = new fabric.Rect({
-            width: squareSize,
-            height: squareSize,
-            top: j * squareSize,
-            left: i * squareSize,
-            fill: "transparent",
-            stroke: "black",
-            strokeWidth: 1,
-          });
-          quiltCanvas.add(img);
-        });
+        }
       }
+    };
+
+    const HSTLayout = () => {
+      const trianglePoints = [
+        { x: 0, y: 0 },
+        { x: squareSize, y: 0 },
+        { x: 0, y: squareSize },
+      ];
+
+      for (let i = 0; i < canvasWidth / squareSize; i++) {
+        for (let j = 0; j < canvasHeight / squareSize; j++) {
+          fabric.Image.fromURL(visibleSwatches[0].imageUrl, (img) => {
+            img.scale(scale).set({
+              top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+              left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+              clipPath: new fabric.Rect({
+                width: squareSize,
+                height: squareSize,
+                absolutePositioned: true,
+                top: j * squareSize,
+                left: i * squareSize,
+              }),
+            });
+            quiltCanvas.add(img);
+          });
+
+          const foregroundSwatches = visibleSwatches.slice(1);
+          const foregroundSwatchCount = foregroundSwatches.length;
+          if (foregroundSwatchCount != 0) {
+            const swatch =
+              foregroundSwatches[getRandomOffset(0, foregroundSwatchCount - 1)];
+            if (Math.random() > 0.3) {
+              fabric.Image.fromURL(swatch.imageUrl, (img) => {
+                img.scale(scale).set({
+                  top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                  left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                  clipPath: new fabric.Polygon(trianglePoints, {
+                    width: squareSize,
+                    height: squareSize,
+                    absolutePositioned: true,
+                    top: j * squareSize,
+                    left: i * squareSize,
+                    flipX: Math.random() > 0.5,
+                    flipY: Math.random() > 0.5,
+                  }),
+                });
+                quiltCanvas.add(img);
+              });
+            }
+          }
+        }
+      }
+    };
+
+    if (currentLayout == "basic") {
+      basicLayout();
+    } else {
+      HSTLayout();
     }
+
     quiltCanvas.renderAll();
   };
 
@@ -136,7 +199,7 @@ const Options = () => {
 
   useEffect(() => {
     renderSwatches(currentFabrics, quilt);
-  }, [gridSize]);
+  }, [gridSize, currentLayout]);
 
   return (
     <div className="OptionsContainer">
@@ -153,11 +216,13 @@ const Options = () => {
             gridSize={gridSize}
             setGridSize={setGridSize}
             exportQuilt={exportQuilt}
+            selectedLayout={currentLayout}
+            changeLayout={(layout) => {
+              setCurrentLayout(layout.target.value);
+            }}
           />
         </div>
-        <SwatchList
-          fabricSwatches={currentFabrics}
-        />
+        <SwatchList fabricSwatches={currentFabrics} />
       </div>
     </div>
   );
