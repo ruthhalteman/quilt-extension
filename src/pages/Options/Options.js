@@ -15,7 +15,7 @@ const getRandomOffset = (min, max) => {
 // 3 = top right hst
 // 4 = bottom left hst
 // 5 = bottom right hst
-const modaLove = [
+const modaLovePositions = [
   [0, 0, 4, 5, 4, 5, 0, 0],
   [0, 1, 1, 2, 3, 1, 1, 0],
   [3, 1, 0, 4, 5, 0, 1, 2],
@@ -24,6 +24,19 @@ const modaLove = [
   [5, 1, 0, 2, 3, 0, 1, 4],
   [0, 1, 1, 4, 5, 1, 1, 0],
   [0, 0, 2, 3, 2, 3, 0, 0],
+];
+
+// 0 is no color
+// 1 is random
+const modaLoveColors = [
+  [0, 0, 1, 1, 1, 1, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 0],
+  [1, 1, 0, 2, 2, 0, 1, 1],
+  [1, 1, 2, 3, 3, 2, 1, 1],
+  [1, 1, 2, 3, 3, 2, 1, 1],
+  [1, 1, 0, 2, 2, 0, 1, 1],
+  [0, 1, 1, 1, 1, 1, 1, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0],
 ];
 
 const EmptyState = () => {
@@ -218,8 +231,16 @@ const Options = () => {
           const foregroundSwatchCount = foregroundSwatches.length;
           if (foregroundSwatchCount != 0) {
             const swatch =
-              foregroundSwatches[getRandomOffset(0, foregroundSwatchCount - 1)];
-            switch (modaLove[j][i]) {
+              foregroundSwatchCount > 1
+                ? foregroundSwatches[
+                    modaLoveColors[j][i] == 2
+                      ? 0
+                      : getRandomOffset(1, foregroundSwatchCount - 1)
+                  ]
+                : foregroundSwatches[
+                    getRandomOffset(0, foregroundSwatchCount - 1)
+                  ];
+            switch (modaLovePositions[j][i]) {
               case 0:
                 break;
               case 1:
