@@ -389,7 +389,7 @@ const Options = () => {
             exportQuilt={exportQuilt}
             selectedLayout={currentLayout}
             changeLayout={(layout) => {
-              setCurrentLayout(layout.target.value);
+              setCurrentLayout(layout);
             }}
           />
         </div>

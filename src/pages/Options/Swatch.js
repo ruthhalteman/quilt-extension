@@ -1,6 +1,13 @@
 import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import "./Swatch.css";
+import { Button, Typography } from "antd";
+const { Text, Link } = Typography;
+import {
+  DeleteOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+} from "@ant-design/icons";
 
 const Swatch = ({ fabricSwatchData, id }) => {
   const deleteSwatch = () => {
@@ -30,26 +37,31 @@ const Swatch = ({ fabricSwatchData, id }) => {
   return (
     <div
       className="swatchContainer"
-      style={{ background: fabricSwatchData.visible ? "#fff" : "#ccc" }}
+      style={{ opacity: fabricSwatchData.visible ? 1 : 0.5, background: '#fff' }}
     >
       <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
       <span className="text">
-        From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, "")}
+        <Text>From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, "")}</Text>
         <br></br>
-        <a
+        <Link
           href={fabricSwatchData.linkUrl || fabricSwatchData.pageUrl}
           target="_blank"
         >
-          Go to this fabric's page
-        </a>
-        <br></br>
-        {fabricSwatchData.visible ? "visible" : "hidden"}
+          View on site
+        </Link>
       </span>
-      <span style={{ display: "flex", flexDirection: "column" }}>
-        <button onClick={deleteSwatch}>delete</button>
-        <button onClick={() => toggleSwatch(fabricSwatchData.imageUrl)}>
-          toggle visibility
-        </button>
+      <span style={{ display: "grid", gridGap: 5 }}>
+        <Button onClick={deleteSwatch} icon={<DeleteOutlined />} />
+        <Button
+          onClick={() => toggleSwatch(fabricSwatchData.imageUrl)}
+          icon={
+            fabricSwatchData.visible ? (
+              <EyeOutlined />
+            ) : (
+              <EyeInvisibleOutlined />
+            )
+          }
+        />
       </span>
     </div>
   );
