@@ -4,6 +4,7 @@ import { useState } from "react";
 import { fabric } from "fabric";
 import Swatch from "./Swatch";
 import SettingsPanel from "./SettingsPanel";
+import SwatchList from "./SwatchList";
 
 const getRandomOffset = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -31,12 +32,11 @@ const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
   const [currentFabrics, setFabrics] = useState([]);
-  const [gridSize, setGridSize] = useState(5);
+  const [gridSize, setGridSize] = useState(6);
   const [isEmpty, setIsEmpty] = useState(false);
 
   const [quilt, setQuilt] = useState(null);
 
-  // update swatch list when we add while shopping
   chrome.storage.onChanged.addListener((changes) => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "fabrics") {
@@ -69,7 +69,7 @@ const Options = () => {
     }
 
     const squareSize = canvasWidth / gridSize;
-    const largeSquareSize = squareSize > canvasWidth / 4;
+    const largeSquareSize = squareSize > canvasWidth / 5;
     const scale = largeSquareSize ? 1 : 0.5;
 
     const visibleSwatches = list.filter((swatch) => swatch.visible);
@@ -124,18 +124,6 @@ const Options = () => {
     quilt.clear();
   };
 
-  const toggleSwatchHandler = (imgUrl) => {
-    let newSelectedFabrics = currentFabrics.map((swatch) => {
-      if (swatch.imageUrl === imgUrl) {
-        swatch.visible = !swatch.visible;
-        return swatch;
-      } else {
-        return swatch;
-      }
-    });
-    chrome.storage.sync.set({ fabrics: newSelectedFabrics });
-  };
-
   const exportQuilt = () => {
     const dataURL = quilt.toDataURL({ format: "png" });
     const link = document.createElement("a");
@@ -167,15 +155,9 @@ const Options = () => {
             exportQuilt={exportQuilt}
           />
         </div>
-        <div className="swatchListContainer">
-          {currentFabrics.map((fabricSwatchData, id) => (
-            <Swatch
-              key={id}
-              fabricSwatchData={fabricSwatchData}
-              toggleSwatch={toggleSwatchHandler}
-            />
-          ))}
-        </div>
+        <SwatchList
+          fabricSwatches={currentFabrics}
+        />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import "./Swatch.css";
 
-const Swatch = ({ fabricSwatchData, id, toggleSwatch }) => {
+const Swatch = ({ fabricSwatchData, id }) => {
   const deleteSwatch = () => {
     chrome.storage.sync.get("fabrics", ({ fabrics }) => {
       chrome.storage.sync.set({
@@ -13,8 +13,25 @@ const Swatch = ({ fabricSwatchData, id, toggleSwatch }) => {
     });
   };
 
+  const toggleSwatch = (imgUrl) => {
+    chrome.storage.sync.get("fabrics", ({ fabrics }) => {
+      let newSelectedFabrics = fabrics.map((swatch) => {
+        if (swatch.imageUrl === imgUrl) {
+          swatch.visible = !swatch.visible;
+          return swatch;
+        } else {
+          return swatch;
+        }
+      });
+      chrome.storage.sync.set({ fabrics: newSelectedFabrics });
+    });
+  };
+
   return (
-    <div className="swatchContainer" style={{background: fabricSwatchData.visible ? '#fff': '#ccc'}}>
+    <div
+      className="swatchContainer"
+      style={{ background: fabricSwatchData.visible ? "#fff" : "#ccc" }}
+    >
       <img className="swatch" src={fabricSwatchData.imageUrl} key={id} />
       <span className="text">
         From {fabricSwatchData.pageUrl.replace(/.+\/\/|www.|\..+/g, "")}
