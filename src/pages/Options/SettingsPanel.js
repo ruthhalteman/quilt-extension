@@ -19,6 +19,7 @@ const SettingsPanel = ({
         value={gridSize}
         max={20}
         min={1}
+        disabled={selectedLayout === "modaLove"}
         onChange={(e) => {
           setGridSize(e.target.value);
         }}
@@ -31,6 +32,7 @@ const SettingsPanel = ({
       >
         <option value="basic">Basic Squares</option>
         <option value="randomHST">Scattered HSTs</option>
+        <option value="modaLove">Moda Love</option>
       </select>{" "}
       <button onClick={clearSwatches}>Clear All Swatches</button>{" "}
       <button onClick={exportQuilt}>Save Image</button>

@@ -2,13 +2,29 @@ import React, { useEffect } from "react";
 import "./Options.css";
 import { useState } from "react";
 import { fabric } from "fabric";
-import Swatch from "./Swatch";
 import SettingsPanel from "./SettingsPanel";
 import SwatchList from "./SwatchList";
 
 const getRandomOffset = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+// 0 = background
+// 1 = foreground
+// 2 = top left hst
+// 3 = top right hst
+// 4 = bottom left hst
+// 5 = bottom right hst
+const modaLove = [
+  [0, 0, 4, 5, 4, 5, 0, 0],
+  [0, 1, 1, 2, 3, 1, 1, 0],
+  [3, 1, 0, 4, 5, 0, 1, 2],
+  [5, 2, 3, 5, 4, 2, 3, 4],
+  [3, 4, 5, 3, 2, 4, 5, 2],
+  [5, 1, 0, 2, 3, 0, 1, 4],
+  [0, 1, 1, 4, 5, 1, 1, 0],
+  [0, 0, 2, 3, 2, 3, 0, 0],
+];
 
 const EmptyState = () => {
   return (
@@ -32,7 +48,7 @@ const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
   const [currentFabrics, setFabrics] = useState([]);
-  const [gridSize, setGridSize] = useState(6);
+  const [currentGridSize, setCurrentGridSize] = useState(6);
   const [isEmpty, setIsEmpty] = useState(false);
   const [currentLayout, setCurrentLayout] = useState("basic");
 
@@ -65,6 +81,11 @@ const Options = () => {
     // wut
     if (!quiltCanvas) {
       return;
+    }
+    let gridSize = currentGridSize;
+    if (currentLayout == "modaLove" && gridSize != 8) {
+      setCurrentGridSize(8);
+      gridSize = 8;
     }
 
     const squareSize = canvasWidth / gridSize;
@@ -123,13 +144,13 @@ const Options = () => {
       }
     };
 
-    const HSTLayout = () => {
-      const trianglePoints = [
-        { x: 0, y: 0 },
-        { x: squareSize, y: 0 },
-        { x: 0, y: squareSize },
-      ];
+    const trianglePoints = [
+      { x: 0, y: 0 },
+      { x: squareSize, y: 0 },
+      { x: 0, y: squareSize },
+    ];
 
+    const HSTLayout = () => {
       for (let i = 0; i < canvasWidth / squareSize; i++) {
         for (let j = 0; j < canvasHeight / squareSize; j++) {
           fabric.Image.fromURL(visibleSwatches[0].imageUrl, (img) => {
@@ -175,8 +196,135 @@ const Options = () => {
       }
     };
 
+    const modaLoveLayout = () => {
+      for (let i = 0; i < canvasWidth / squareSize; i++) {
+        for (let j = 0; j < canvasHeight / squareSize; j++) {
+          fabric.Image.fromURL(visibleSwatches[0].imageUrl, (img) => {
+            img.scale(scale).set({
+              top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+              left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
+              clipPath: new fabric.Rect({
+                width: squareSize,
+                height: squareSize,
+                absolutePositioned: true,
+                top: j * squareSize,
+                left: i * squareSize,
+              }),
+            });
+            quiltCanvas.add(img);
+          });
+
+          const foregroundSwatches = visibleSwatches.slice(1);
+          const foregroundSwatchCount = foregroundSwatches.length;
+          if (foregroundSwatchCount != 0) {
+            const swatch =
+              foregroundSwatches[getRandomOffset(0, foregroundSwatchCount - 1)];
+            switch (modaLove[j][i]) {
+              case 0:
+                break;
+              case 1:
+                fabric.Image.fromURL(swatch.imageUrl, (img) => {
+                  img.scale(scale).set({
+                    top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    left:
+                      i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    clipPath: new fabric.Rect({
+                      width: squareSize,
+                      height: squareSize,
+                      absolutePositioned: true,
+                      top: j * squareSize,
+                      left: i * squareSize,
+                    }),
+                  });
+                  quiltCanvas.add(img);
+                });
+                break;
+              case 2:
+                fabric.Image.fromURL(swatch.imageUrl, (img) => {
+                  img.scale(scale).set({
+                    top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    left:
+                      i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    clipPath: new fabric.Polygon(trianglePoints, {
+                      width: squareSize,
+                      height: squareSize,
+                      absolutePositioned: true,
+                      top: j * squareSize,
+                      left: i * squareSize,
+                      flipX: false,
+                      flipY: false,
+                    }),
+                  });
+                  quiltCanvas.add(img);
+                });
+                break;
+              case 3:
+                fabric.Image.fromURL(swatch.imageUrl, (img) => {
+                  img.scale(scale).set({
+                    top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    left:
+                      i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    clipPath: new fabric.Polygon(trianglePoints, {
+                      width: squareSize,
+                      height: squareSize,
+                      absolutePositioned: true,
+                      top: j * squareSize,
+                      left: i * squareSize,
+                      flipX: true,
+                      flipY: false,
+                    }),
+                  });
+                  quiltCanvas.add(img);
+                });
+                break;
+              case 4:
+                fabric.Image.fromURL(swatch.imageUrl, (img) => {
+                  img.scale(scale).set({
+                    top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    left:
+                      i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    clipPath: new fabric.Polygon(trianglePoints, {
+                      width: squareSize,
+                      height: squareSize,
+                      absolutePositioned: true,
+                      top: j * squareSize,
+                      left: i * squareSize,
+                      flipX: false,
+                      flipY: true,
+                    }),
+                  });
+                  quiltCanvas.add(img);
+                });
+                break;
+              case 5:
+                fabric.Image.fromURL(swatch.imageUrl, (img) => {
+                  img.scale(scale).set({
+                    top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    left:
+                      i * squareSize - getRandomOffset(offsetMin, offsetMax),
+                    clipPath: new fabric.Polygon(trianglePoints, {
+                      width: squareSize,
+                      height: squareSize,
+                      absolutePositioned: true,
+                      top: j * squareSize,
+                      left: i * squareSize,
+                      flipX: true,
+                      flipY: true,
+                    }),
+                  });
+                  quiltCanvas.add(img);
+                });
+                break;
+            }
+          }
+        }
+      }
+    };
+
     if (currentLayout == "basic") {
       basicLayout();
+    } else if (currentLayout == "modaLove") {
+      modaLoveLayout();
     } else {
       HSTLayout();
     }
@@ -201,7 +349,7 @@ const Options = () => {
 
   useEffect(() => {
     renderSwatches(currentFabrics, quilt);
-  }, [gridSize, currentLayout, currentFabrics]);
+  }, [currentGridSize, currentLayout, currentFabrics]);
 
   return (
     <div className="OptionsContainer">
@@ -215,8 +363,8 @@ const Options = () => {
 
           <SettingsPanel
             clearSwatches={clearSwatches}
-            gridSize={gridSize}
-            setGridSize={setGridSize}
+            gridSize={currentGridSize}
+            setGridSize={setCurrentGridSize}
             exportQuilt={exportQuilt}
             selectedLayout={currentLayout}
             changeLayout={(layout) => {
