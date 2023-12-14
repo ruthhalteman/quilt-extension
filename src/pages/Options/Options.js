@@ -166,7 +166,7 @@ const Options = () => {
     const HSTLayout = () => {
       for (let i = 0; i < canvasWidth / squareSize; i++) {
         for (let j = 0; j < canvasHeight / squareSize; j++) {
-          fabric.Image.fromURL(visibleSwatches[0].imageUrl, (img) => {
+          fabric.Image.fromURL(visibleSwatches[swatchCount-1].imageUrl, (img) => {
             img.scale(scale).set({
               top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
               left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
@@ -181,7 +181,7 @@ const Options = () => {
             quiltCanvas.add(img);
           });
 
-          const foregroundSwatches = visibleSwatches.slice(1);
+          const foregroundSwatches = visibleSwatches.slice(0, swatchCount-1);
           const foregroundSwatchCount = foregroundSwatches.length;
           if (foregroundSwatchCount != 0) {
             const swatch =
@@ -212,7 +212,7 @@ const Options = () => {
     const modaLoveLayout = () => {
       for (let i = 0; i < canvasWidth / squareSize; i++) {
         for (let j = 0; j < canvasHeight / squareSize; j++) {
-          fabric.Image.fromURL(visibleSwatches[0].imageUrl, (img) => {
+          fabric.Image.fromURL(visibleSwatches[swatchCount-1].imageUrl, (img) => {
             img.scale(scale).set({
               top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
               left: i * squareSize - getRandomOffset(offsetMin, offsetMax),
@@ -227,7 +227,7 @@ const Options = () => {
             quiltCanvas.add(img);
           });
 
-          const foregroundSwatches = visibleSwatches.slice(1);
+          const foregroundSwatches = visibleSwatches.slice(0, swatchCount-1);
           const foregroundSwatchCount = foregroundSwatches.length;
           if (foregroundSwatchCount != 0) {
             const swatch =
