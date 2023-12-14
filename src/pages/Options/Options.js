@@ -9,11 +9,30 @@ const getRandomOffset = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+const EmptyState = () => {
+  return (
+    <div
+      style={{
+        height: 500,
+        width: 500,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        border: "1px solid #ccc",
+        position: "absolute",
+      }}
+    >
+      Start adding some fabrics!
+    </div>
+  );
+};
+
 const Options = () => {
   const canvasHeight = 500;
   const canvasWidth = 500;
   const [currentFabrics, setFabrics] = useState([]);
   const [gridSize, setGridSize] = useState(5);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   const [quilt, setQuilt] = useState(null);
 
@@ -58,11 +77,13 @@ const Options = () => {
 
     // Chose these by experimentation, to avoid getting borders, watermarks etc in the image
     const offsetMin = 20;
-    const offsetMax = largeSquareSize ? 120 : 70;
+    const offsetMax = largeSquareSize ? 120 : 80;
 
     if (swatchCount === 0) {
+      setIsEmpty(true);
       return;
     }
+    setIsEmpty(false);
 
     // we always want to clear, since we load a full design every time
     quiltCanvas.clear();
@@ -100,6 +121,7 @@ const Options = () => {
 
   const clearSwatches = () => {
     chrome.storage.sync.set({ fabrics: [] });
+    quilt.clear();
   };
 
   const toggleSwatchHandler = (imgUrl) => {
@@ -135,7 +157,9 @@ const Options = () => {
       </div>
       <div className="contentContainer">
         <div className="canvasContainer">
+          {isEmpty && <EmptyState />}
           <canvas className="quiltCanvas" id="quiltCanvas"></canvas>
+
           <SettingsPanel
             clearSwatches={clearSwatches}
             gridSize={gridSize}
