@@ -17,6 +17,8 @@ const SettingsPanel = ({
       <input
         type="number"
         value={gridSize}
+        max={20}
+        min={1}
         onChange={(e) => {
           setGridSize(e.target.value);
         }}
@@ -29,8 +31,8 @@ const SettingsPanel = ({
       >
         <option value="basic">Basic Squares</option>
         <option value="randomHST">Modern HSTs</option>
-      </select>
-      <button onClick={clearSwatches}>Clear All Swatches</button>
+      </select>{" "}
+      <button onClick={clearSwatches}>Clear All Swatches</button>{" "}
       <button onClick={exportQuilt}>Save Image</button>
     </div>
   );

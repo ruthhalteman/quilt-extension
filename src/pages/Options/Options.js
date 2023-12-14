@@ -150,7 +150,7 @@ const Options = () => {
           if (foregroundSwatchCount != 0) {
             const swatch =
               foregroundSwatches[getRandomOffset(0, foregroundSwatchCount - 1)];
-            if (Math.random() > 0.3) {
+            if (largeSquareSize ? Math.random() > 0.3 : Math.random() > 0.5) {
               fabric.Image.fromURL(swatch.imageUrl, (img) => {
                 img.scale(scale).set({
                   top: j * squareSize - getRandomOffset(offsetMin, offsetMax),
